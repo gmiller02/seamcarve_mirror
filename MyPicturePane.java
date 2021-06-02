@@ -2,6 +2,9 @@ package seamcarve;
 
 import javafx.scene.layout.BorderPane;
 import support.seamcarve.*;
+import java.lang.reflect.Array;
+import javafx.scene.paint.Color;
+import java.lang.Math;
 
 
 /**
@@ -18,6 +21,12 @@ import support.seamcarve.*;
  */
 
 public class MyPicturePane extends PicturePane {
+	private int[][] _valuesArray;
+	private Color pixColor;
+	private int[] _seam;
+	private Color n1;
+	private Color n2;
+	private Color n3;
 
 
 
@@ -30,6 +39,7 @@ public class MyPicturePane extends PicturePane {
 	 */
 	public MyPicturePane(BorderPane pane, String filename) {
 		super(pane, filename);
+		_valuesArray = new int [getPicHeight()/20][getPicWidth()/20];
 
 	}
 
@@ -69,8 +79,75 @@ public class MyPicturePane extends PicturePane {
 	 * @return the lowest cost seam of the current image
  	 */
 	protected int[] findLowestCostSeam() {
-		// TODO: Your code here
-		return null;
+		int[][] dirsArray = new int[10][10];
+		int[][] costArray = new int[10][10];
+
+		costArray[getPicHeight() - 1][getPicWidth()] = _valuesArray[getPicHeight() - 1][getPicWidth()];
+
+		for (int row = getPicHeight() - 2; row > 0; row--) {
+			for (int col = 0; col> getPicWidth() - 1; col++) {
+				costArray[row][col] = _valuesArray[row][col] + min(costArray[row + 1][col -1], costArray[row + 1][col], costArray[row + 1][col + 1]);
+				// directions: if min x, directions =
+			}
+		}
+
+		int min_col = argmin(costArray[0][0]);
+
+		int[] _seam = new int[0];
+
+		_seam[0] = min_col;
+
+		for (int row = 0; row > getPicHeight() - 2; row++) {
+			_seam[row + 1] = _seam[row] + dirsArray[row][_seam[row]];
+		}
+
+		return _seam;
 	}
+
+	private void caculateValues() {
+		for (int row=0; row< getPicHeight()/20; row++) {
+			for (int col = 0; col < getPicWidth()/20; col++) {
+				pixColor = getPixelColor(row, col);
+
+				int currRed = getColorRed(pixColor);
+				int currBlue = getColorBlue(pixColor);
+				int currGreen = getColorGreen(pixColor);
+
+				if (col != 0 || col != getPicWidth()/20) {
+					Color n1 = getPixelColor(row - 1, col - 1);
+					Color n2 = getPixelColor(row -1, col);
+					Color n3 = getPixelColor(row + 1, col + 1);
+				}
+
+				if (col == 0) {
+					Color n2 = getPixelColor(row -1, col);
+					Color n3 = getPixelColor(row + 1, col + 1);
+				}
+
+				if (col == getPicWidth()/20) {
+					Color n1 = getPixelColor(row - 1, col - 1);
+					Color n2 = getPixelColor(row -1, col);
+				}
+
+				int redn1 = getColorRed(n1);
+				int greenn1 = getColorGreen(n1);
+				int bluen1 = getColorBlue(n1);
+
+				int redn2 = getColorRed(n2);
+				int greenn2 = getColorGreen(n2);
+				int bluen2 = getColorBlue(n2);
+
+				int redn3 = getColorRed(n3);
+				int greenn3 = getColorGreen(n3);
+				int bluen3 = getColorBlue(n3);
+
+
+
+
+
+			}
+		}
+	}
+
 
 }
