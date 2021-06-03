@@ -437,10 +437,7 @@ public class MyPicturePane extends PicturePane {
 
 				}
 
-
 				return total;
-
-
 	}
 
 	public int endColumn(int row, int col) {
@@ -448,29 +445,123 @@ public class MyPicturePane extends PicturePane {
 				int currRed = getColorRed(pixColor);
 				int currBlue = getColorBlue(pixColor);
 				int currGreen = getColorGreen(pixColor);
+				int total = 0;
 
-
-					n1 = getPixelColor(row - 1, col - 1);
+				if (row == 0) { // top right
+					Color n1 = getPixelColor(row - 1, col);
 					int redn1 = getColorRed(n1);
 					int greenn1 = getColorGreen(n1);
 					int bluen1 = getColorBlue(n1);
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-		            int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
 
-					n2 = getPixelColor(row -1, col);
+					Color n2 = getPixelColor(row, col + 1);
 					int redn2 = getColorRed(n2);
 					int greenn2 = getColorGreen(n2);
 					int bluen2 = getColorBlue(n2);
-		            int redDiff2 = currRed - redn2;
-		            int greenDiff2 = currGreen - greenn2;
-		            int blueDiff2 = currBlue - bluen2;
-		            int sumof2 = redDiff1 + blueDiff1 + greenDiff1;
+					int redDiff2 = currRed - redn2;
+					int greenDiff2 = currGreen - greenn2;
+					int blueDiff2 = currBlue - bluen2;
+					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
 
-		            int sumDiff = sumof1 + sumof2;
+					Color n3 = getPixelColor(row - 1, col + 1);
+					int redn3 = getColorRed(n3);
+					int greenn3 = getColorGreen(n3);
+					int bluen3 = getColorBlue(n3);
+					int redDiff3 = currRed - redn3;
+					int greenDiff3 = currGreen - greenn3;
+					int blueDiff3 = currBlue - bluen3;
+					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
 
-		            return sumDiff;
+					total = sumof1 + sumof2 + sumof3;
+				}
+
+				else if (row == getPicHeight()) { // bottom right
+					Color n1 = getPixelColor(row, col - 1);
+					int redn1 = getColorRed(n1);
+					int greenn1 = getColorGreen(n1);
+					int bluen1 = getColorBlue(n1);
+					int redDiff1 = currRed - redn1;
+					int greenDiff1 = currGreen - greenn1;
+					int blueDiff1 = currBlue - bluen1;
+					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+
+					Color n2 = getPixelColor(row - 1, col);
+					int redn2 = getColorRed(n2);
+					int greenn2 = getColorGreen(n2);
+					int bluen2 = getColorBlue(n2);
+					int redDiff2 = currRed - redn2;
+					int greenDiff2 = currGreen - greenn2;
+					int blueDiff2 = currBlue - bluen2;
+					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+
+					Color n3 = getPixelColor(row - 1, col - 1);
+					int redn3 = getColorRed(n3);
+					int greenn3 = getColorGreen(n3);
+					int bluen3 = getColorBlue(n3);
+					int redDiff3 = currRed - redn3;
+					int greenDiff3 = currGreen - greenn3;
+					int blueDiff3 = currBlue - bluen3;
+					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+
+					total = sumof1 + sumof2 + sumof3;
+				}
+
+				else { //middle right
+					Color n1 = getPixelColor(row, col - 1);
+					int redn1 = getColorRed(n1);
+					int greenn1 = getColorGreen(n1);
+					int bluen1 = getColorBlue(n1);
+					int redDiff1 = currRed - redn1;
+					int greenDiff1 = currGreen - greenn1;
+					int blueDiff1 = currBlue - bluen1;
+					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+
+					Color n2 = getPixelColor(row, col + 1);
+					int redn2 = getColorRed(n2);
+					int greenn2 = getColorGreen(n2);
+					int bluen2 = getColorBlue(n2);
+					int redDiff2 = currRed - redn2;
+					int greenDiff2 = currGreen - greenn2;
+					int blueDiff2 = currBlue - bluen2;
+					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+
+					Color n3 = getPixelColor(row - 1, col - 1);
+					int redn3 = getColorRed(n3);
+					int greenn3 = getColorGreen(n3);
+					int bluen3 = getColorBlue(n3);
+					int redDiff3 = currRed - redn3;
+					int greenDiff3 = currGreen - greenn3;
+					int blueDiff3 = currBlue - bluen3;
+					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+
+
+					Color n4 = getPixelColor(row - 1, col + 1);
+					int redn4 = getColorRed(n4);
+					int greenn4 = getColorGreen(n4);
+					int bluen4 = getColorBlue(n4);
+					int redDiff4 = currRed - redn4;
+					int greenDiff4 = currGreen - greenn4;
+					int blueDiff4 = currBlue - bluen4;
+					int sumof4 = redDiff4 + blueDiff4 + greenDiff4;
+
+					Color n5 = getPixelColor(row - 1, col);
+					int redn5 = getColorRed(n5);
+					int greenn5 = getColorGreen(n5);
+					int bluen5 = getColorBlue(n5);
+					int redDiff5 = currRed - redn5;
+					int greenDiff5 = currGreen - greenn5;
+					int blueDiff5 = currBlue - bluen5;
+					int sumof5 = redDiff5 + blueDiff5 + greenDiff5;
+
+					total = sumof1 + sumof2 + sumof3 + sumof4 + sumof5;
+				}
+
+
+
+		        return total;
 	}
 
 	public int argMin(int row) {
