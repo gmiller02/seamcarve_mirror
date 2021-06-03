@@ -26,14 +26,6 @@ public class MyPicturePane extends PicturePane {
 	private int[][] _costArray;
 	private Color pixColor;
 	private int[] _seam;
-	private Color n1;
-	private Color n2;
-	private Color n3;
-	private Color n4;
-	private Color n5;
-	private Color n6;
-	private Color n7;
-	private Color n8;
 
 
 
@@ -47,6 +39,7 @@ public class MyPicturePane extends PicturePane {
 	public MyPicturePane(BorderPane pane, String filename) {
 		super(pane, filename);
 		_valuesArray = new int [getPicHeight()][getPicWidth()];
+		this.caculateValues();
 
 
 	}
@@ -88,19 +81,21 @@ public class MyPicturePane extends PicturePane {
  	 */
 	protected int[] findLowestCostSeam() {
 
-
 		_costArray[getPicHeight() - 1][getPicWidth()] = _valuesArray[getPicHeight() - 1][getPicWidth()];
 
 		for (int row = getPicHeight() - 2; row >= 0; row--) {
 			for (int col = 0; col <= getPicWidth() - 1; col++) {
-				_costArray[row][col] = _valuesArray[row][col] + Math.min(_costArray[row + 1][col -1], _costArray[row + 1][col], _costArray[row + 1][col + 1]);
-				// directions: if min x, directions =
+				if (row == 0) {
+
+				}
+				_costArray[row][col] = _valuesArray[row][col] + Math.min(_costArray[row + 1][col -1], Math.min(_costArray[row + 1][col], _costArray[row + 1][col + 1]));
+
 			}
 		}
 
 		int min_col = argMin(_costArray[0][0]);
 
-		int[] _seam = new int[0];
+		int[] _seam = new int[getPicHeight()];
 
 		_seam[0] = min_col;
 
@@ -111,32 +106,54 @@ public class MyPicturePane extends PicturePane {
 		return _seam;
 	}
 
+	/**
+	 * This method fills in my values array with the neighbors that are caculated in my three helper methods, which are
+	 * expanded upon below.
+	 */
+
 	private void caculateValues() {
-		for (int row=0; row< getPicHeight(); row++) {
+		for (int row=0; row< getPicHeight(); row++) { // loops through values array
 			for (int col = 0; col < getPicWidth(); col++) {
 
-				if (col != 0 || col != getPicWidth()) {
-					_valuesArray[row][col] = this.middleColumns(row, col);
+				if (col != 0 && col != getPicWidth()) {
+					_valuesArray[row][col] = this.middleColumns(row, col); // fill in the middle columns with neighbors
+					System.out.println(this.middleColumns(row,col));
 				}
 
 				if (col == 0) {
-					_valuesArray[row][col] = this.leftColumn(row, col);
+					_valuesArray[row][col] = this.leftColumn(row, col); // fills in the leftmost columns with neighbors
+					System.out.println(this.leftColumn(row,col));
 				}
 
 				if (col == getPicWidth()) {
-					_valuesArray[row][col] = this.endColumn(row, col);
+					_valuesArray[row][col] = this.endColumn(row, col); // fills in the rightmost columns with neighbors
+					System.out.println(this.endColumn(row,col));
 				}
-
 			}
 		}
 	}
 
+	/**
+	 * This method intakes an integer called row and an integer called column. In this method, I define a color
+	 * called pixColor, and obtain ints of the current red, blue, and green color values in a pixel. This method's
+	 * goal is to define and caculate the neighbors of the middle columns of values. In each if statement, it obtains
+	 * the color of a neighbor pixel, caculates the RGB values of it, and then caculates the difference between the
+	 * neighbor colors and the current colors. Then, I add all of the differences to get the sum of all of the differences
+	 * for the neighbor. Then, at the end of all of the if statements that caculate all of the potential neighbors,
+	 * I add up all the sums to get the total pixel importance.
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+
 	public int middleColumns(int row, int col) {
-				pixColor = getPixelColor(row, col);
+				pixColor = getPixelColor(row, col); // color of current pixel
 				int currRed = getColorRed(pixColor);
 				int currBlue = getColorBlue(pixColor);
 				int currGreen = getColorGreen(pixColor);
 				int total = 0;
+
+				// below, all of the possible neighbors of the current pixel are caculated
 
 				if (row == getPicHeight()) { // middle bottom
 					Color n1 = getPixelColor(row, col - 1);
@@ -146,7 +163,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row, col + 1);
 					int redn2 = getColorRed(n2);
@@ -155,7 +172,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
 					Color n3 = getPixelColor(row + 1, col);
 					int redn3 = getColorRed(n3);
@@ -164,7 +181,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
 					Color n4 = getPixelColor(row + 1, col - 1);
 					int redn4 = getColorRed(n4);
@@ -173,7 +190,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff4 = currRed - redn4;
 					int greenDiff4 = currGreen - greenn4;
 					int blueDiff4 = currBlue - bluen4;
-					int sumof4 = redDiff4 + blueDiff4 + greenDiff4;
+					int sumof4 = Math.abs(redDiff4 + blueDiff4 + greenDiff4);
 
 					Color n5 = getPixelColor(row + 1, col + 1);
 					int redn5 = getColorRed(n5);
@@ -182,7 +199,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff5 = currRed - redn5;
 					int greenDiff5 = currGreen - greenn5;
 					int blueDiff5 = currBlue - bluen5;
-					int sumof5 = redDiff5 + blueDiff5 + greenDiff5;
+					int sumof5 = Math.abs(redDiff5 + blueDiff5 + greenDiff5);
 
 					total = sumof1 + sumof2 + sumof3 + sumof4 + sumof5;
 
@@ -196,7 +213,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row, col + 1);
 					int redn2 = getColorRed(n2);
@@ -205,25 +222,25 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
-					Color n3 = getPixelColor(row - 1, col);
+					Color n3 = getPixelColor(row + 1, col);
 					int redn3 = getColorRed(n3);
 					int greenn3 = getColorGreen(n3);
 					int bluen3 = getColorBlue(n3);
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
-					Color n4 = getPixelColor(row - 1, col - 1);
+					Color n4 = getPixelColor(row + 1, col - 1);
 					int redn4 = getColorRed(n4);
 					int greenn4 = getColorGreen(n4);
 					int bluen4 = getColorBlue(n4);
 					int redDiff4 = currRed - redn4;
 					int greenDiff4 = currGreen - greenn4;
 					int blueDiff4 = currBlue - bluen4;
-					int sumof4 = redDiff4 + blueDiff4 + greenDiff4;
+					int sumof4 = Math.abs(redDiff4 + blueDiff4 + greenDiff4);
 
 					Color n5 = getPixelColor(row + 1, col + 1);
 					int redn5 = getColorRed(n5);
@@ -232,7 +249,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff5 = currRed - redn5;
 					int greenDiff5 = currGreen - greenn5;
 					int blueDiff5 = currBlue - bluen5;
-					int sumof5 = redDiff5 + blueDiff5 + greenDiff5;
+					int sumof5 = Math.abs(redDiff5 + blueDiff5 + greenDiff5);
 
 					total = sumof1 + sumof2 + sumof3 + sumof4 + sumof5;
 				}
@@ -245,7 +262,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row - 1, col);
 					int redn2 = getColorRed(n2);
@@ -254,7 +271,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
 					Color n3 = getPixelColor(row + 1, col + 1);
 					int redn3 = getColorRed(n3);
@@ -263,7 +280,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
 					Color n4 = getPixelColor(row, col - 1);
 					int redn4 = getColorRed(n4);
@@ -272,7 +289,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff4 = currRed - redn4;
 					int greenDiff4 = currGreen - greenn4;
 					int blueDiff4 = currBlue - bluen4;
-					int sumof4 = redDiff4 + blueDiff4 + greenDiff4;
+					int sumof4 = Math.abs(redDiff4 + blueDiff4 + greenDiff4);
 
 					Color n5 = getPixelColor(row, col + 1);
 					int redn5 = getColorRed(n5);
@@ -281,7 +298,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff5 = currRed - redn5;
 					int greenDiff5 = currGreen - greenn5;
 					int blueDiff5 = currBlue - bluen5;
-					int sumof5 = redDiff5 + blueDiff5 + greenDiff5;
+					int sumof5 = Math.abs(redDiff5 + blueDiff5 + greenDiff5);
 
 					Color n6 = getPixelColor(row - 1, col + 1);
 					int redn6 = getColorRed(n6);
@@ -290,7 +307,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff6 = currRed - redn6;
 					int greenDiff6 = currGreen - greenn6;
 					int blueDiff6 = currBlue - bluen6;
-					int sumof6 = redDiff6 + blueDiff6 + greenDiff6;
+					int sumof6 = Math.abs(redDiff6 + blueDiff6 + greenDiff6);
 
 					Color n7 = getPixelColor(row + 1, col);
 					int redn7 = getColorRed(n7);
@@ -299,7 +316,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff7 = currRed - redn7;
 					int greenDiff7 = currGreen - greenn7;
 					int blueDiff7 = currBlue - bluen7;
-					int sumof7 = redDiff7 + blueDiff7 + greenDiff7;
+					int sumof7 = Math.abs(redDiff7 + blueDiff7 + greenDiff7);
 
 					Color n8 = getPixelColor(row + 1, col + 1);
 					int redn8 = getColorRed(n8);
@@ -308,7 +325,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff8 = currRed - redn8;
 					int greenDiff8 = currGreen - greenn8;
 					int blueDiff8 = currBlue - bluen8;
-					int sumof8 = redDiff8 + blueDiff8 + greenDiff8;
+					int sumof8 = Math.abs(redDiff8 + blueDiff8 + greenDiff8);
 
 					total = sumof1 + sumof2 + sumof3 + sumof4 + sumof5 + sumof6 + sumof7 + sumof8;
 
@@ -317,6 +334,13 @@ public class MyPicturePane extends PicturePane {
 
 		return total;
 	}
+
+	/**
+	 * This method does the exact same thing as the above method, except it applies to the leftmost column of pixels.
+	 * @param row
+	 * @param col
+	 * @return
+	 */
 
 	public int leftColumn(int row, int col) {
 				pixColor = getPixelColor(row, col);
@@ -333,7 +357,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row + 1, col);
 					int redn2 = getColorRed(n2);
@@ -342,7 +366,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
 					Color n3 = getPixelColor(row + 1, col + 1);
 					int redn3 = getColorRed(n3);
@@ -351,7 +375,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
 					total = sumof1 + sumof2 + sumof3;
 				}
@@ -364,7 +388,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row + 1, col);
 					int redn2 = getColorRed(n2);
@@ -373,7 +397,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
 					Color n3 = getPixelColor(row + 1, col - 1);
 					int redn3 = getColorRed(n3);
@@ -382,7 +406,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
 					total = sumof1 + sumof2 + sumof3;
 				}
@@ -395,7 +419,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row + 1, col);
 					int redn2 = getColorRed(n2);
@@ -404,7 +428,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
 					Color n3 = getPixelColor(row + 1, col - 1);
 					int redn3 = getColorRed(n3);
@@ -413,7 +437,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
 					Color n4 = getPixelColor(row + 1, col + 1);
 					int redn4 = getColorRed(n4);
@@ -422,7 +446,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff4 = currRed - redn4;
 					int greenDiff4 = currGreen - greenn4;
 					int blueDiff4 = currBlue - bluen4;
-					int sumof4 = redDiff4 + blueDiff4 + greenDiff4;
+					int sumof4 = Math.abs(redDiff4 + blueDiff4 + greenDiff4);
 
 					Color n5 = getPixelColor(row, col + 1);
 					int redn5 = getColorRed(n5);
@@ -431,7 +455,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff5 = currRed - redn5;
 					int greenDiff5 = currGreen - greenn5;
 					int blueDiff5 = currBlue - bluen5;
-					int sumof5 = redDiff5 + blueDiff5 + greenDiff5;
+					int sumof5 = Math.abs(redDiff5 + blueDiff5 + greenDiff5);
 
 					total = sumof1 + sumof2 + sumof3 + sumof4 + sumof5;
 
@@ -439,6 +463,14 @@ public class MyPicturePane extends PicturePane {
 
 				return total;
 	}
+
+	/**
+	 * This method functions the exact same as the above two methods, except that it applies to the rightmost column of
+	 * pixels.
+	 * @param row
+	 * @param col
+	 * @return
+	 */
 
 	public int endColumn(int row, int col) {
 				pixColor = getPixelColor(row, col);
@@ -455,7 +487,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row, col + 1);
 					int redn2 = getColorRed(n2);
@@ -464,7 +496,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
 					Color n3 = getPixelColor(row - 1, col + 1);
 					int redn3 = getColorRed(n3);
@@ -473,7 +505,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
 					total = sumof1 + sumof2 + sumof3;
 				}
@@ -486,7 +518,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row - 1, col);
 					int redn2 = getColorRed(n2);
@@ -495,7 +527,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
 					Color n3 = getPixelColor(row - 1, col - 1);
 					int redn3 = getColorRed(n3);
@@ -504,7 +536,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
 					total = sumof1 + sumof2 + sumof3;
 				}
@@ -517,7 +549,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff1 = currRed - redn1;
 					int greenDiff1 = currGreen - greenn1;
 					int blueDiff1 = currBlue - bluen1;
-					int sumof1 = redDiff1 + blueDiff1 + greenDiff1;
+					int sumof1 = Math.abs(redDiff1 + blueDiff1 + greenDiff1);
 
 					Color n2 = getPixelColor(row, col + 1);
 					int redn2 = getColorRed(n2);
@@ -526,7 +558,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff2 = currRed - redn2;
 					int greenDiff2 = currGreen - greenn2;
 					int blueDiff2 = currBlue - bluen2;
-					int sumof2 = redDiff2 + blueDiff2 + greenDiff2;
+					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
 					Color n3 = getPixelColor(row - 1, col - 1);
 					int redn3 = getColorRed(n3);
@@ -535,7 +567,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff3 = currRed - redn3;
 					int greenDiff3 = currGreen - greenn3;
 					int blueDiff3 = currBlue - bluen3;
-					int sumof3 = redDiff3 + blueDiff3 + greenDiff3;
+					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
 
 					Color n4 = getPixelColor(row - 1, col + 1);
@@ -545,7 +577,7 @@ public class MyPicturePane extends PicturePane {
 					int redDiff4 = currRed - redn4;
 					int greenDiff4 = currGreen - greenn4;
 					int blueDiff4 = currBlue - bluen4;
-					int sumof4 = redDiff4 + blueDiff4 + greenDiff4;
+					int sumof4 = Math.abs(redDiff4 + blueDiff4 + greenDiff4);
 
 					Color n5 = getPixelColor(row - 1, col);
 					int redn5 = getColorRed(n5);
@@ -554,15 +586,22 @@ public class MyPicturePane extends PicturePane {
 					int redDiff5 = currRed - redn5;
 					int greenDiff5 = currGreen - greenn5;
 					int blueDiff5 = currBlue - bluen5;
-					int sumof5 = redDiff5 + blueDiff5 + greenDiff5;
+					int sumof5 = Math.abs(redDiff5 + blueDiff5 + greenDiff5);
 
 					total = sumof1 + sumof2 + sumof3 + sumof4 + sumof5;
 				}
 
 
-
 		        return total;
 	}
+
+	/**
+	 * This function finds the argument of the minimum of a function. It takes in an integer row, which stands in for
+	 * a particular row in the values array. This function loops through the columns in order to go through a single
+	 * row, and finds the minimum of all of the values of the index.
+	 * @param row
+	 * @return
+	 */
 
 	public int argMin(int row) {
 		int value = Integer.MAX_VALUE;
