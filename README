@@ -2,16 +2,15 @@ seamcarve README
 
 Handin: This is my final handin
 
-My seamcarve has the following classes: App and MyPicturePane
-
-App instantiates my MyPicturePane class.
-
 Design choices: I think my design of MyPicturePane class is slightly unique. I created several helper methods to fill
 my values table. I had three different methods that handle the rightmost, leftmost, and middle columns of pixels in the
-image, and then I have a fillvalues method that uses those three methods to fill in my values array.
+image, and then I have a fillvalues method that uses those three methods to fill in my values array. All of my column-
+filling methods return the sum of all of the differences of the values, and then I use those totals to caculate the
+total importance of every possible neighbor.
 
-Known Bugs: I have no known bugs
+Known Bugs: I have no known bugs.
 
-Hours: This project took around 25 hours to complete
+Explanation of Test Cases:
+
 
 
