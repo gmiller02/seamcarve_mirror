@@ -10,7 +10,9 @@ total importance of every possible neighbor.
 
 Known Bugs: I have no known bugs.
 
-Explanation of Test Cases:
+Explanation of Test Cases: I know that my code is working as intended because it carves seams in a very similar method
+to the demo: horizontal seams (up to 399) that compress the image. The only difference I can see is that mine runs
+a little slower than the demo, but intellij runs slower on my mac because of the chip and processing system.
 
 
 
