@@ -38,6 +38,8 @@ public class MyPicturePane extends PicturePane {
 	 */
 	public MyPicturePane(BorderPane pane, String filename) {
 		super(pane, filename);
+		_costArray = new int [getPicHeight()][getPicWidth()];
+		_dirsArray = new int [getPicHeight()][getPicWidth()];
 		_valuesArray = new int [getPicHeight()][getPicWidth()];
 		this.caculateValues();
 
@@ -81,15 +83,19 @@ public class MyPicturePane extends PicturePane {
  	 */
 	protected int[] findLowestCostSeam() {
 
-		_costArray[getPicHeight() - 1][getPicWidth()] = _valuesArray[getPicHeight() - 1][getPicWidth()];
+		//_costArray[getPicHeight() - 1][getPicWidth() - 1] = _valuesArray[getPicHeight() - 1][getPicWidth() - 1];
 
 		for (int row = getPicHeight() - 2; row >= 0; row--) {
 			for (int col = 0; col <= getPicWidth() - 1; col++) {
-				if (row == 0) {
-					_costArray[row][col] = _valuesArray[row][col] + Math.min(_costArray[row + 1][col -1], Math.min(_costArray[row + 1][col], _costArray[row + 1][col + 1]));
-				}
+
+
+					//_costArray[row][col] = _valuesArray[row][col] + Math.min(_costArray[row + 1][col -1], Math.min(_costArray[row + 1][col], _costArray[row + 1][col + 1]));
+
 
 				if (col == 0) {
+					int min = Math.min(_costArray[row - 1][col], _costArray[row - 1][col + 1]);
+					_costArray[row][col] = _valuesArray[row][col] + min;
+
 					if(Math.min(_costArray[row - 1][col], _costArray[row - 1][col + 1]) == _costArray[row - 1][col]) {
 						_dirsArray[row][col] = 0;
 					}
@@ -99,6 +105,9 @@ public class MyPicturePane extends PicturePane {
 				}
 
 				else if (col == getPicWidth() - 1) {
+					int min = Math.min(_costArray[row - 1][col], _costArray[row - 1][col - 1]);
+					_costArray[row][col] = _valuesArray[row][col] + min;
+
 					if (Math.min(_costArray[row - 1][col], _costArray[row - 1][col - 1]) == _costArray[row - 1][col]) {
 						_dirsArray[row][col] = 0;
 					}
@@ -108,6 +117,9 @@ public class MyPicturePane extends PicturePane {
 				}
 
 				else {
+					int min = Math.min(_costArray[row - 1][col], Math.min(_costArray[row - 1][col - 1], _costArray[row - 1][col + 1]));
+					_costArray[row][col] = _valuesArray[row][col] + min;
+
 					if (Math.min(_costArray[row - 1][col], Math.min(_costArray[row - 1][col - 1], _costArray[row - 1][col + 1])) == _costArray[row - 1][col]) {
 						_dirsArray[row][col] = 0;
 					}
@@ -143,10 +155,10 @@ public class MyPicturePane extends PicturePane {
 	 */
 
 	private void caculateValues() {
-		for (int row=0; row< getPicHeight(); row++) { // loops through values array
-			for (int col = 0; col < getPicWidth(); col++) {
+		for (int row=0; row< getPicHeight() - 1; row++) { // loops through values array
+			for (int col = 0; col < getPicWidth() - 1; col++) {
 
-				if (col != 0 && col != getPicWidth()) {
+				if (col != 0 && col != getPicWidth() - 1) {
 					_valuesArray[row][col] = this.middleColumns(row, col); // fill in the middle columns with neighbors
 					System.out.println(this.middleColumns(row,col));
 				}
@@ -156,7 +168,7 @@ public class MyPicturePane extends PicturePane {
 					System.out.println(this.leftColumn(row,col));
 				}
 
-				if (col == getPicWidth()) {
+				if (col == getPicWidth() - 1) {
 					_valuesArray[row][col] = this.endColumn(row, col); // fills in the rightmost columns with neighbors
 					System.out.println(this.endColumn(row,col));
 				}
@@ -186,7 +198,7 @@ public class MyPicturePane extends PicturePane {
 
 				// below, all of the possible neighbors of the current pixel are caculated
 
-				if (row == getPicHeight()) { // middle bottom
+				if (row == getPicHeight() - 1) { // middle bottom
 					Color n1 = getPixelColor(row, col - 1);
 					int redn1 = getColorRed(n1);
 					int greenn1 = getColorGreen(n1);
@@ -411,7 +423,7 @@ public class MyPicturePane extends PicturePane {
 					total = sumof1 + sumof2 + sumof3;
 				}
 
-				else if (row == getPicHeight()) { //left bottom
+				else if (row == getPicHeight() - 1) { //left bottom
 					Color n1 = getPixelColor(row, col - 1);
 					int redn1 = getColorRed(n1);
 					int greenn1 = getColorGreen(n1);
@@ -443,7 +455,7 @@ public class MyPicturePane extends PicturePane {
 				}
 
 				else { // left middle
-					Color n1 = getPixelColor(row, col - 1);
+					Color n1 = getPixelColor(row - 1, col);
 					int redn1 = getColorRed(n1);
 					int greenn1 = getColorGreen(n1);
 					int bluen1 = getColorBlue(n1);
@@ -461,7 +473,7 @@ public class MyPicturePane extends PicturePane {
 					int blueDiff2 = currBlue - bluen2;
 					int sumof2 = Math.abs(redDiff2 + blueDiff2 + greenDiff2);
 
-					Color n3 = getPixelColor(row + 1, col - 1);
+					Color n3 = getPixelColor(row + 1, col + 1);
 					int redn3 = getColorRed(n3);
 					int greenn3 = getColorGreen(n3);
 					int bluen3 = getColorBlue(n3);
@@ -470,7 +482,7 @@ public class MyPicturePane extends PicturePane {
 					int blueDiff3 = currBlue - bluen3;
 					int sumof3 = Math.abs(redDiff3 + blueDiff3 + greenDiff3);
 
-					Color n4 = getPixelColor(row + 1, col + 1);
+					Color n4 = getPixelColor(row - 1, col + 1);
 					int redn4 = getColorRed(n4);
 					int greenn4 = getColorGreen(n4);
 					int bluen4 = getColorBlue(n4);
@@ -541,7 +553,7 @@ public class MyPicturePane extends PicturePane {
 					total = sumof1 + sumof2 + sumof3;
 				}
 
-				else if (row == getPicHeight()) { // bottom right
+				else if (row == getPicHeight() - 1) { // bottom right
 					Color n1 = getPixelColor(row, col - 1);
 					int redn1 = getColorRed(n1);
 					int greenn1 = getColorGreen(n1);
@@ -637,7 +649,7 @@ public class MyPicturePane extends PicturePane {
 	public int argMin(int row) {
 		int value = Integer.MAX_VALUE;
 		int index = 0;
-		for (int i = 0; i < getPicWidth(); i++) {
+		for (int i = 0; i < getPicWidth() - 1; i++) {
 				if (_valuesArray[row][i] < value) {
 					value = _valuesArray[row][i];
 					index = i;
