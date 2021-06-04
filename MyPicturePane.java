@@ -86,9 +86,40 @@ public class MyPicturePane extends PicturePane {
 		for (int row = getPicHeight() - 2; row >= 0; row--) {
 			for (int col = 0; col <= getPicWidth() - 1; col++) {
 				if (row == 0) {
-
+					_costArray[row][col] = _valuesArray[row][col] + Math.min(_costArray[row + 1][col -1], Math.min(_costArray[row + 1][col], _costArray[row + 1][col + 1]));
 				}
-				_costArray[row][col] = _valuesArray[row][col] + Math.min(_costArray[row + 1][col -1], Math.min(_costArray[row + 1][col], _costArray[row + 1][col + 1]));
+
+				if (col == 0) {
+					if(Math.min(_costArray[row - 1][col], _costArray[row - 1][col + 1]) == _costArray[row - 1][col]) {
+						_dirsArray[row][col] = 0;
+					}
+					else {
+						_dirsArray[row][col] = 1;
+					}
+				}
+
+				else if (col == getPicWidth() - 1) {
+					if (Math.min(_costArray[row - 1][col], _costArray[row - 1][col - 1]) == _costArray[row - 1][col]) {
+						_dirsArray[row][col] = 0;
+					}
+					else {
+						_dirsArray[row][col] = -1;
+					}
+				}
+
+				else {
+					if (Math.min(_costArray[row - 1][col], Math.min(_costArray[row - 1][col - 1], _costArray[row - 1][col + 1])) == _costArray[row - 1][col]) {
+						_dirsArray[row][col] = 0;
+					}
+					else if (Math.min(_costArray[row - 1][col], Math.min(_costArray[row - 1][col - 1], _costArray[row - 1][col + 1])) == _costArray[row - 1][col - 1]) {
+						_dirsArray[row][col] = -1;
+
+					}
+					else {
+						_dirsArray[row][col] = 1;
+					}
+				}
+
 
 			}
 		}
